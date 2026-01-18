@@ -46,7 +46,7 @@ Permite a organização das tarefas por contexto.
 | Coluna | Tipo (Postgres) | Restrição | Descrição |
 | :--- | :--- | :--- | :--- |
 | **id** | `bigint` | **PK** | Identificador único universal. |
-| `name` | `varchar(50)` | Not Null | Título da categoria (ex: "Trabalho"). |
+| `name` | `varchar(30)` | Unique | Título da categoria (ex: "Trabalho"). |
 | `color` | `varchar(6)` | Not Null | Código Hex da cor (ex: "#FF0000"). |
 | `user_id` | `bigint` | **FK** | Referência ao dono da categoria (`users`). |
 
@@ -56,7 +56,7 @@ O registro das atividades a serem realizadas.
 | Coluna | Tipo (Postgres) | Restrição | Descrição |
 | :--- | :--- | :--- | :--- |
 | **id** | `bigint` | **PK** | Identificador único universal. |
-| `title` | `varchar(200)` | Not Null | Título curto da tarefa com até 200 caracteres. |
+| `title` | `varchar` | Not Null | Título curto da tarefa com até 200 caracteres. |
 | `description` | `text` | - | Detalhamento da tarefa (sem limite curto). |
 | `status` | `boolean` | Default: False | Situação atual da tarefa (feita/não feita). |
 | `due_date` | `timestamp` | - | Data e hora limite para conclusão. |
