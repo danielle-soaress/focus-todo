@@ -33,7 +33,6 @@ Armazena as informações de autenticação e perfil.
 | :--- | :--- | :--- | :--- |
 | **id** | `bigint` | **PK** | Identificador único universal. |
 | `full_name` | `varchar(100)` | Not Null | Nome completo para exibição. |
-| `username` | `varchar(60)` | Unique | Nome de usuário único na plataforma. |
 | `email` | `varchar(100)` | Unique | E-mail para contato e login. |
 | `password_digest` | `varchar` | Not Null | Hash da senha criptografada. |
 
@@ -44,7 +43,7 @@ Permite a organização das tarefas por contexto.
 | :--- | :--- | :--- | :--- |
 | **id** | `bigint` | **PK** | Identificador único universal. |
 | `name` | `varchar(50)` | Not Null | Título da categoria (ex: "Trabalho"). |
-| `color` | `varchar(6)` | - | Código Hex da cor (ex: "#FF0000"). |
+| `color` | `varchar(6)` | Not Null | Código Hex da cor (ex: "#FF0000"). |
 | `user_id` | `bigint` | **FK** | Referência ao dono da categoria (`users`). |
 
 ### Tabela: `tasks`
@@ -57,6 +56,6 @@ O registro das atividades a serem realizadas.
 | `description` | `text` | - | Detalhamento da tarefa (sem limite curto). |
 | `status` | `boolean` | Default: False | Situação atual da tarefa (feita/não feita). |
 | `due_date` | `timestamp` | - | Data e hora limite para conclusão. |
-| `created_at` | `timestamp` | - | Data de criação. |
-| `user_id` | `uuid` | **FK** | Referência ao dono da tarefa (`users`). |
-| `category_id` | `uuid` | **FK** | Referência à categoria (`categories`). |
+| `priority` | `integer` | Default: 0 (Low) | Prioridade da tarefa (0 - Low, 1 - Medium, 2 - High) |
+| `user_id` | `bigint` | **FK** | Referência ao dono da tarefa (`users`). |
+| `category_id` | `bigint` | **FK** | Referência à categoria (`categories`). |
