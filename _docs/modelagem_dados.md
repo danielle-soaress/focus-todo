@@ -6,6 +6,8 @@ Este documento descreve a estrutura do banco de dados relacional (PostgreSQL) ut
 
 <img src="assets/DER.png">
 
+<br>
+
 O modelo baseia-se em três entidades principais, onde o Usuário é a entidade central que detém a posse tanto das Categorias quanto das Tarefas.
 
 ### 1.1. Entidades e Regras de Negócio
@@ -24,9 +26,11 @@ O modelo baseia-se em três entidades principais, onde o Usuário é a entidade 
 
 <img src="assets/DLD.png">
 
+<br>
+
 Abaixo está a definição detalhada das tabelas, tipos de dados e restrições.
 
-### Tabela: `users`
+### 2.1. Tabela: `users`
 Armazena as informações de autenticação e perfil.
 
 | Coluna | Tipo (Postgres) | Restrição | Descrição |
@@ -36,7 +40,7 @@ Armazena as informações de autenticação e perfil.
 | `email` | `varchar(100)` | Unique | E-mail para contato e login. |
 | `password_digest` | `varchar` | Not Null | Hash da senha criptografada. |
 
-### Tabela: `categories`
+### 2.2. Tabela: `categories`
 Permite a organização das tarefas por contexto.
 
 | Coluna | Tipo (Postgres) | Restrição | Descrição |
@@ -46,7 +50,7 @@ Permite a organização das tarefas por contexto.
 | `color` | `varchar(6)` | Not Null | Código Hex da cor (ex: "#FF0000"). |
 | `user_id` | `bigint` | **FK** | Referência ao dono da categoria (`users`). |
 
-### Tabela: `tasks`
+### 2.3. Tabela: `tasks`
 O registro das atividades a serem realizadas.
 
 | Coluna | Tipo (Postgres) | Restrição | Descrição |
