@@ -11,6 +11,6 @@ class User < ApplicationRecord
   has_many :categories, dependent: :destroy
   has_many :tasks, dependent: :destroy
 
-  validates :full_name, presence: true
+  validates :full_name, presence: true, length: {minimum: 3, maximum: 100}
 
 end
