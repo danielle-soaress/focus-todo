@@ -1,0 +1,39 @@
+@forward 'colors';
+@forward 'mixins';
+
+@use 'mixins' as *;
+
+@use 'colors' as *;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'DM Sans'
+}
+
+a, a:visited, a:hover{
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+button {
+    @include center-all;
+    padding: 8px 20px;
+    background: linear-gradient(90deg, $primary 10%, $secondary 140%);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight:400;
+    font-size: 1em;
+    cursor: pointer;
+    transition: ease 0.4s;
+}
+
+button:hover {
+    transform: scale(1.03);
+    transition: ease 0.3s;
+}
+
+

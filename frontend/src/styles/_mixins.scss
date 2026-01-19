@@ -1,0 +1,18 @@
+// centralizar na horizontal e vertical
+@mixin center-all {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// centralizar só na horizontal
+@mixin center-x {
+  display: flex;
+  justify-content: center;
+}
+
+// centralizar só na vertical
+@mixin center-y {
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,22 @@
+@use '../../styles/main' as *;
+
+.header_div {
+    @include center-y;
+    width: 90vw;
+    height: 8vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 15px 0px;
+
+    span {
+        @include center-all;
+        gap: 25px;
+        font-size: 1em;
+    }
+
+    button {
+        background-color: transparent;
+    }
+
+}

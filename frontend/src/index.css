@@ -1,0 +1,22 @@
+* {
+    font-family: "DM Sans", sans-serif;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: white;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+}
+
+#root {
+    width: 90vw;
+    height: 100vh;
+}
+

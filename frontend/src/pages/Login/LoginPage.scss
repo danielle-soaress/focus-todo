@@ -1,0 +1,133 @@
+@use '../../styles/main' as *;
+
+.login_container {
+    height: 92vh;
+
+    .login_content{
+        @include center-all;
+        justify-content: space-between;
+        height: 92vh;
+        width: 100%;
+        padding: 20px;
+        gap: 30px;
+
+        .left_content {
+            display: flex;
+            justify-content: start;
+            align-items: end;
+            padding: 60px;
+            background: #dbe4ff;
+            background: radial-gradient(circle,rgb(197, 210, 250) 0%, rgba(161, 181, 245, 1) 40%, rgb(94, 116, 224) 100%);
+            width: 50%;
+            height: 100%;
+            border-radius:30px;
+            font-weight: 200;
+            letter-spacing: 1.1px;
+
+
+            p {
+                color: white;
+                font-size: 1.3em;
+            }
+        }
+        
+        .right_content {
+            @include center-all;
+            flex-direction: column;
+            width: 50%;
+
+            .introduction_text_span {
+                @include center-all;
+                flex-direction: column;
+                margin-bottom: 10px;
+
+                img {
+                    width: 70px;
+                }
+
+                .introduce_text {
+                    background: linear-gradient(20deg, $darker-blue 0%, $secondary 100%);
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    color: transparent;
+                    font-weight: 700; 
+                    display: inline-block;
+                    font-size: 2em;
+                }
+            }
+
+            form {
+                @include center-all;
+                flex-direction: column;
+                width: 80%;
+
+                label {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    margin: 8px 0px;
+                    max-width: 400px;
+
+                    .textInput {
+                        width: 100%;
+                        margin-top: 4px;
+                        background-color: transparent;
+                        border-radius: 5px;
+                        border: 1px solid rgba(0, 0, 0, 0.2);
+                        padding: 10px 20px;
+                        outline: none;
+                        transition: ease 0.3s;
+                        font-size: 1rem;
+                        color: $primary-black;
+
+                        &:hover {
+                            border-color: rgba(0, 0, 0, 0.5); 
+                        }
+
+                        &:focus {
+                            outline: 1.5px solid $primary;
+                            transition: ease 0.3s;
+                        }
+                    }
+                    
+                    input[type="password"]::placeholder {
+                        letter-spacing: 2px;
+                        font-size: 1.2rem;
+                        color: #9CA3AF;
+                    }
+                    
+                }
+
+                .link_forgot{
+                    margin: 10px;
+                    color: $darker-blue!important;
+                    font-weight: 500;
+                    width: 80%;
+                    max-width: 400px;
+                    text-align: end;
+                }
+
+
+                .remember-me {
+                    display: inline-block;
+                    cursor: pointer;
+                }
+
+                button {
+                    width: 100%;
+                    margin: 20px 0px;
+                    max-width: 400px;
+                }
+            }
+
+            .login_signup_link_span{
+                width: 80%;
+                max-width: 400px;
+                .link {
+                    color: $darker-blue!important;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
