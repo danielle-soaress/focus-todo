@@ -66,3 +66,29 @@ export const signInApi = async (bodyObject) => {
         return [null, { status: 0, message: "Sem conexão com o servidor." }];
     }
 }
+
+export const signOutApi = async (bodyObject) => {
+
+    const token = localStorage.getItem('user_token');
+
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(bodyObject)
+    }
+
+    try {
+        const response = await fetch(`/users/sign_out`, requestOptions);
+
+        if (response.ok) {
+            return true;
+        }
+        return false;
+    } catch (error ) {
+        console.error("Erro fatal de rede:", error);
+        return [null, { status: 0, message: "Sem conexão com o servidor." }];
+    }
+}

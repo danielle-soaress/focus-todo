@@ -158,7 +158,7 @@ const DashboardPage = () => {
 
   return (
     <>
-    <Navbar login={false} signup={false}/>
+    <Navbar login={false} signup={false} logged={true}/>
     <div className="dashboard_container">      
       <section className="calendar_grid" ref={containerRef}>
         <div className="spook"></div>
