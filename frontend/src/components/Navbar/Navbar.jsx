@@ -1,26 +1,27 @@
 import './Navbar.scss'
 import logoImg from '../../assets/focus_logo.svg'
-import {React, useState} from 'react';
+import {Link,useNavigate } from 'react-router-dom';
 
 
 const Navbar = ({login, signup}) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <div className="header_div">
-            <img src={logoImg}/>
-            
+            <Link to="/">
+                <img src={logoImg} alt=""/>
+            </Link>
             <span>
                 {
                     login && signup ? (
                         <>
-                            <a href="">Login</a>
-                            <button>Cadastre-se</button>
+                            <Link to="/login">Login</Link>
+                            <button onClick={() => navigate("/signup")}>Cadastre-se</button>
                         </>
                     ) : (
                         login ?
-                        <button>{"Faça Login"}</button> :
-                        (signup ? <button>{"Cadastre-se"}</button> : '')
+                        <button onClick={() => navigate("/login")}>{"Faça Login"}</button> :
+                        (signup ? <button onClick={() => navigate("/signup")}>{"Cadastre-se"}</button> : null)
                     )
                 }
             </span>            

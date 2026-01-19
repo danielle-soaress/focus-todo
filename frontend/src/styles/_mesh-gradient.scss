@@ -22,7 +22,7 @@
   width: 40vw; 
   height: 40vw;
   background-color: $blob;
-  animation: move-blob-1 15s ease-in-out infinite;
+  animation: move-blob-1 6s ease-in-out infinite;
 }
 
 .blob-2 {
@@ -36,17 +36,17 @@
 @keyframes move-blob-2 {
   0% {
     bottom: 10%;
-    right: 0%;
+    right: -10%;
     transform: scale(1.2);
   }
   50% {
     bottom: 15%; 
-    right: 10%; 
+    right: 20%; 
     transform: scale(1);
   }
   100% {
     bottom: 10%;
-    right: 0%;
+    right: -10%;
     transform: scale(1.2);
   }
 }

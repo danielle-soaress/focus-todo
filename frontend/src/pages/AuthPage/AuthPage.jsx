@@ -1,31 +1,48 @@
 
-import React, { useState } from 'react';
-import './LoginPage.scss'
+import { useState } from 'react';
+import './AuthPage.scss'
 import Navbar from '../../components/Navbar/Navbar'
-import homeImg from '../../assets/home_img.svg'
 import spiralIcon from '../../assets/spiral.svg'
+import {Link, useNavigate, useLocation } from 'react-router-dom';
 
-function LoginPage({introduce_text = "Bem-vindo!", initialLoginState = true}) {
+function AuthPage() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isLoginView = location.pathname === '/login';
+
     const [loginAttempts, setLoginAttempts] = useState(0); 
-    const [isLoginView, setIsLoginView] = useState(initialLoginState);
 
+    // to-do
     const handleLoginSubmit = (e) => {
         e.preventDefault();
-        setLoginAttempts(prev => prev + 1); 
+        console.log("Tentando logar...");
+        setLoginAttempts(prev => prev + 1);
+        // Se der certo:
+        // navigate('/dashboard');
+    };
+
+    // to-do
+    const handleSignupSubmit = (e) => {
+        e.preventDefault();
+        console.log("Tentando cadastrar...");
+
+        // Se der certo:
+        // navigate('/dashboard'); 
     };
 
     return (
     <div className="login_container">
-        <Navbar login={!isLoginView} signup={isLoginView}/>
+        <Navbar login={!isLoginView} signup={isLoginView} />
 
         <div className="login_content">
             <div className="left_content">
                 <p>Transforme sua lista de tarefas,<br/>Realize pequenas vitórias diárias.</p>
             </div>
             <div className="right_content">
-                <span class="introduction_text_span">
+                <span className="introduction_text_span">
                     <img src={spiralIcon}/>
-                    <p className="introduce_text">{introduce_text}</p>
+                    <p className="introduce_text">{isLoginView ? "Bem-vindo!" : "Faça o Seu Cadastro"}</p>
                 </span>
                 {
                     isLoginView ? (
@@ -76,11 +93,10 @@ function LoginPage({introduce_text = "Bem-vindo!", initialLoginState = true}) {
 
                 <span className="login_signup_link_span">
                     {isLoginView ? "Não tem uma conta? " : "Já tem conta? "}
-                    <a className="link"  
-                        onClick={() => setIsLoginView(!isLoginView)} 
-                        style={{ cursor: 'pointer', color: 'blue' }}>
+                    <Link to={isLoginView ? "/signup" : "/login"} className="link"
+                        style={{ cursor: 'pointer', color: 'blue', textDecoration: 'none' }}>
                         {isLoginView ? "Cadastre-se" : "Faça Login"}
-                    </a>
+                    </Link>
                 </span>
             </div>
         </div>
@@ -88,4 +104,4 @@ function LoginPage({introduce_text = "Bem-vindo!", initialLoginState = true}) {
     );
 }
 
-export default LoginPage
+export default AuthPage
