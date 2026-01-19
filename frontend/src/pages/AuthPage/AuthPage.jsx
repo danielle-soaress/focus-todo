@@ -4,6 +4,7 @@ import './AuthPage.scss'
 import Navbar from '../../components/Navbar/Navbar'
 import spiralIcon from '../../assets/spiral.svg'
 import {Link, useNavigate, useLocation } from 'react-router-dom';
+import {signInApi, signUpApi} from '../../services/authService'
 
 function AuthPage() {
     const navigate = useNavigate();
@@ -11,24 +12,79 @@ function AuthPage() {
 
     const isLoginView = location.pathname === '/login';
 
-    const [loginAttempts, setLoginAttempts] = useState(0); 
+    const [loginAttempts, setLoginAttempts] = useState(0);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    // to-do
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         console.log("Tentando logar...");
+
+        const formData = new FormData(e.target);
+        const email = formData.get('email');
+        const password = formData.get('password');
+
+        
+        const [result, error] = await signInApi({
+            user: {
+                email: email,
+                password: password
+            }
+        });
+
+        if (error) {
+            console.log("deu erro:", error);
+            alert("erro no login: " + error);
+            setErrorMessage("Verifique suas credenciais e tente novamente");
+        } else {
+            console.log("sucesso:", result);
+
+            if (result.token) {
+                localStorage.setItem('user_token', result.token);
+            }
+
+            navigate('/dashboard');
+        }
+
         setLoginAttempts(prev => prev + 1);
-        // Se der certo:
-        // navigate('/dashboard');
     };
 
     // to-do
-    const handleSignupSubmit = (e) => {
+    const handleSignupSubmit = async (e) => {
         e.preventDefault();
-        console.log("Tentando cadastrar...");
+        setErrorMessage('');
 
-        // Se der certo:
-        // navigate('/dashboard'); 
+        const formData = new FormData(e.target);
+        const full_name = formData.get('name');
+        const email = formData.get('email');
+        const password = formData.get('password');
+        const confirmPassword = formData.get('confirm_password');
+
+        if (password !== confirmPassword) {
+            setErrorMessage("As senhas não coincidem.");
+            return;
+        }
+
+        console.log("Realizando cadastro...");
+
+        const [result, error] = await signUpApi({
+            user: {
+                email: email,
+                full_name: full_name,
+                password: password
+            }
+        });
+
+        if (error) {
+            console.log("deu erro:", error);
+            alert("erro no cadastro: " + error);
+        } else {
+            console.log("sucesso:", result);
+            navigate('/login');
+        }
+
+        setLoginAttempts(prev => prev + 1);
     };
 
     return (
@@ -53,10 +109,10 @@ function AuthPage() {
                             </label>
                             <label>
                                 Senha
-                                <input className="textInput"  type="password" name="password" placeholder="••••••••" required />
+                                <input className="textInput"  type="password" name="password" placeholder="••••••••" minLength={6} required/>
                             </label>
 
-                            {loginAttempts >= 2 && (
+                            {loginAttempts >= 1 && (
                                 <a href="#" className="link_forgot">Esqueci a senha</a>
                             )}
 
@@ -64,28 +120,25 @@ function AuthPage() {
                                 <input type="checkbox" name="remember_me"/> Lembre-se de mim
                             </label>
 
-
                             <button type="submit">Faça login</button>
-
-                            
                         </form>
                     ) : (
-                        <form>
+                        <form onSubmit={handleSignupSubmit}>
                             <label>
                                 Seu nome
-                                <input className="textInput"  type="text" name="name" placeholder="Ana Silva" />
+                                <input className="textInput"  type="text" name="name" placeholder="Ana Silva"  required/>
                             </label>
                             <label>
                                 Email
-                                <input className="textInput"  type="email" name="email" placeholder="ana@exemplo.com" />
+                                <input className="textInput"  type="email" name="email" placeholder="ana@exemplo.com" required/>
                             </label>
                             <label>
                                 Senha
-                                <input className="textInput"  type="password" name="password" placeholder="••••••••" />
+                                <input className="textInput"  type="password" name="password" placeholder="••••••••" minLength={6} required/>
                             </label>
                             <label>
                                 Repita a senha
-                                <input className="textInput"  type="password" name="password" placeholder="••••••••" />
+                                <input className="textInput"  type="password" name="confirm_password" placeholder="••••••••" minLength={6} required/>
                             </label>
                             <button type="submit">Cadastrar</button>
                         </form>
@@ -98,6 +151,8 @@ function AuthPage() {
                         {isLoginView ? "Cadastre-se" : "Faça Login"}
                     </Link>
                 </span>
+
+                {errorMessage && (<div className="error">{errorMessage}</div>)}
             </div>
         </div>
     </div>
