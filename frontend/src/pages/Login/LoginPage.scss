@@ -46,13 +46,7 @@
                 }
 
                 .introduce_text {
-                    background: linear-gradient(20deg, $darker-blue 0%, $secondary 100%);
-                    background-clip: text;
-                    -webkit-background-clip: text;
-                    color: transparent;
-                    font-weight: 700; 
-                    display: inline-block;
-                    font-size: 2em;
+                    @include gradient-text;
                 }
             }
 

@@ -18,7 +18,9 @@ const Navbar = ({login, signup}) => {
                             <button>Cadastre-se</button>
                         </>
                     ) : (
-                        <button>{login ? "Faça Login" : "Cadastre-se"}</button>
+                        login ?
+                        <button>{"Faça Login"}</button> :
+                        (signup ? <button>{"Cadastre-se"}</button> : '')
                     )
                 }
             </span>            
