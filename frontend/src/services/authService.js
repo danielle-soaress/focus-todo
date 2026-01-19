@@ -49,11 +49,15 @@ export const signInApi = async (bodyObject) => {
 
     try {
         const response = await fetch(`/users/sign_in`, requestOptions);
+        const authHeader = response.headers.get('Authorization');
+        let data = {};
+
+        data = await response.json();
+
 
         if (response.ok) {
-            const result = await response.json();
-            console.log('Response: ', result); 
-            return [result, null]
+            const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+            return [{ token: token, user: data}, null];
         }
         return [null, { status: response.status,
                         message: response.error || response.errors || 'Erro desconhecido'}];
