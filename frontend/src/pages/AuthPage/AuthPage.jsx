@@ -34,12 +34,8 @@ function AuthPage() {
         });
 
         if (error) {
-            console.log("deu erro:", error);
-            alert("erro no login: " + error);
-            setErrorMessage("Verifique suas credenciais e tente novamente");
+            errorHandler(error);
         } else {
-            console.log("sucesso:", result);
-
             if (result.token) {
                 localStorage.setItem('user_token', result.token);
             }
@@ -50,7 +46,6 @@ function AuthPage() {
         setLoginAttempts(prev => prev + 1);
     };
 
-    // to-do
     const handleSignupSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
@@ -77,14 +72,37 @@ function AuthPage() {
         });
 
         if (error) {
-            console.log("deu erro:", error);
-            alert("erro no cadastro: " + error);
+            errorHandler(error);
         } else {
-            console.log("sucesso:", result);
             navigate('/login');
         }
 
         setLoginAttempts(prev => prev + 1);
+    };
+
+    const errorHandler = (error) => {
+        let msgAmigavel = ""
+        switch (error.status) {
+            case 401:
+                msgAmigavel = "Dados inválidos. Verifique-os e Tente Novamente";
+                break;
+            case 404:
+                msgAmigavel = "Não encontramos uma conta com este email.";
+                break;
+            case 422:
+                msgAmigavel = "Dados inválidos. Verifique a formatação do email.";
+                break;
+            case 500:
+                msgAmigavel = "Erro interno no servidor. Tente novamente mais tarde.";
+                break;
+            case 0:
+                msgAmigavel = "Parece que você está sem internet ou o servidor caiu.";
+                break;
+            default:
+                msgAmigavel = error.message || "Ocorreu um erro inesperado.";
+        }
+
+        setErrorMessage(msgAmigavel);
     };
 
     return (

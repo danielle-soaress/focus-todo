@@ -21,12 +21,13 @@ export const signUpApi = async (bodyObject) => {
         if (response.ok) {
             const result = await response.json();
             console.log('Response: ', result); 
-            return [result, '']
+            return [result, null]
         }
-        return ['', 'Server side error']
-    } catch (error ) {
-        console.log('Error: ', error);
-        return ['', `Server down: ${error}`]
+        return [null, { status: response.status,
+                        message: response.error || response.errors || 'Erro desconhecido'}];
+    } catch (error) {
+        console.error("Erro fatal de rede:", error);
+        return [null, { status: 0, message: "Sem conexão com o servidor." }];
     }
 }
 
@@ -52,11 +53,12 @@ export const signInApi = async (bodyObject) => {
         if (response.ok) {
             const result = await response.json();
             console.log('Response: ', result); 
-            return [result, '']
+            return [result, null]
         }
-        return ['', 'Server side error']
+        return [null, { status: response.status,
+                        message: response.error || response.errors || 'Erro desconhecido'}];
     } catch (error ) {
-        console.log('Error: ', error);
-        return ['', `Server down: ${error}`]
+        console.error("Erro fatal de rede:", error);
+        return [null, { status: 0, message: "Sem conexão com o servidor." }];
     }
 }
