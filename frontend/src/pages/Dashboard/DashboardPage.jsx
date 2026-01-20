@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef, useMemo} from 'react';
 import {format, addDays, startOfDay, isAfter, addMonths, isSameMonth, startOfMonth} from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import './DashboardPage.scss';
@@ -9,11 +9,12 @@ import { getAllCategories } from '../../services/categoryService';
 
 const DashboardPage = () => {
   const [tasks, setTasks] = useState([]);
+  const [calendarTasks, setCalendarTasks] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const loadTasks = async () => {
     const [data, error] = await getAllTasks();
-    if (data) setTasks(data);
+    if (data) {setTasks(data); setCalendarTasks(data);}
     if (error != null) error.status == 401 ? handleSignOutSubmit() : null;
   };
 
@@ -186,42 +187,40 @@ const DashboardPage = () => {
     if (selectedTask) {
       const [updated, error] = await updateTask(selectedTask.id, payload);
       if (updated) {
-        setTasks(tasks.map(t => t.id === updated.id ? updated : t));
+        setTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
+        setCalendarTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
         setModalOpen(false);
       }
       loadTasks();
     } else {
       const [created, error] = await createTask(payload);
       if (created) {
-        setTasks([...tasks, created]);
+        setTasks(prev => [...prev, created]);
+        setCalendarTasks(prev => [...prev, created]);
         setModalOpen(false);
       }
     }
   };
 
-  const toggleTask = async (id) => {
+  const toggleTask = (id) => {
     const taskToToggle = tasks.find(t => t.id === id);
     if (!taskToToggle) return;
 
-    const newStatus = !taskToToggle.done;
+    const newStatus = !taskToToggle.status;
 
-    setTasks(prevTasks => {
-        return prevTasks.map(task => {
-            if (task.id === id) {
-                return { ...task, done: newStatus };
-            }
-            return task;
-        });
-    });
+    setTasks(prevTasks => prevTasks.map(t => {
+        if (t.id === id) {
+            return { ...t, status: newStatus };
+        }
+        return t;
+    }));
 
-    const [data, error] = await updateTask(id, {task: { status: newStatus} });
-
-    if (error) {
+    updateTask(id, {task: { status: newStatus} }).catch((error) => {
         setTasks(prevTasks => prevTasks.map(task => 
-            task.id === id ? { ...task, done: !newStatus } : task
+            task.id === id ? { ...task, status: !newStatus } : task
         ));
         alert("Não foi possível salvar a alteração.");
-    }
+    })
   };
 
   /* CATEGORIES */
@@ -258,61 +257,63 @@ const DashboardPage = () => {
     return true;
   });
 
+  const calendarGrid = useMemo(() => {
+    return visibleDays.map((day, index) => {
+
+      const dayTasks = calendarTasks.filter(task => {
+          if (!task.due_date) return false;
+          const taskDateOnly = task.due_date.toString().split('T')[0];
+          return taskDateOnly === day.fullDate;
+      });
+
+      const isToday = day.fullDate === todayStr;
+      const previousDay = visibleDays[index - 1];
+      const isNewMonth = index === 0 || !isSameMonth(day.dateObj, previousDay.dateObj);
+      const elements = [];
+
+      if (isNewMonth) {
+        elements.push(
+          <div key={`month-${day.fullDate}`} className="month_header sticky_header">
+            {format(day.dateObj, 'MMMM yyyy', { locale: ptBR })}
+          </div>
+        );
+      }
+
+      elements.push(
+        <div key={day.fullDate} className={`day_card ${isToday? 'today_day_card' : ''}`}>
+          <h3 className="day_header">
+            <span className="day_number_span">{day.dayNumber}</span>
+            {capitalizeFirst(day.dayName)}
+          </h3>
+          
+          <div className="day_tasks">
+            {dayTasks.length > 0 ? (dayTasks.map(task => {
+              const category = categories.find(c => c.id === task.category_id);
+              const categoryColor = category ? "#" + category.color : '#ccc';
+
+              return (
+                <div key={task.id} className={`mini_task`}>
+                  <div className="bar" style={{backgroundColor: categoryColor}}></div>
+                  <span>{task.title.length > 15 ? task.title.substring(0, 15) + "..." : task.title}</span>
+                  <div className={`dot ${"priority" + task.priority}`} ></div>
+                </div>
+              );
+            })) : (null)}
+          </div>
+        </div>
+      );
+
+      return elements;
+    });
+  }, [visibleDays, calendarTasks, categories, todayStr]);
+
   return (
     <>
     <Navbar login={false} signup={false} logged={true}/>
     <div className="dashboard_container">      
       <section className="calendar_grid" ref={containerRef}>
-        <div className="spook"></div>
         
-        {visibleDays.map((day, index) => {
-          // console.log("Dia gerado:", day.fullDate);
-          const dayTasks = tasks.filter(task => {
-              if (!task.due_date) return false;
-              const taskDateOnly = task.due_date.toString().split('T')[0];
-              return taskDateOnly === day.fullDate;
-          });
-
-          const isToday = day.fullDate === todayStr;
-
-          const previousDay = visibleDays[index - 1];
-          const isNewMonth = index === 0 || !isSameMonth(day.dateObj, previousDay.dateObj);
-          const elements = [];
-
-          if (isNewMonth) {
-            elements.push(
-              <div key={`month-${day.fullDate}`} className="month_header sticky_header">
-                {format(day.dateObj, 'MMMM yyyy', { locale: ptBR })}
-              </div>
-            );
-          }
-
-          elements.push(
-            <div key={day.fullDate} className={`day_card ${isToday? 'today_day_card' : ''}`}>
-              <h3 className="day_header">
-                <span className="day_number_span">{day.dayNumber}</span>
-                {capitalizeFirst(day.dayName)}
-              </h3>
-              
-              <div className="day_tasks">
-                {dayTasks.length > 0 ? (dayTasks.map(task => {
-                  const category = categories.find(c => c.id === task.category_id);
-                  const categoryColor = category ? "#" + category.color : '#ccc';
-
-                  console.log(categories);
-
-                  return (<div key={task.id} className={`mini_task`}>
-                    <div className="bar" style={{backgroundColor: categoryColor}}></div>
-                    <span>{task.title}</span>
-                    <div className={`dot ${"priority" + task.priority}`} ></div>
-                  </div>);
-                })) : (null)}
-              </div>
-            </div>
-          );
-
-          return elements;
-        })}
+        {calendarGrid}
 
         {!hasReachedLimit && (<div id="bottom-sentinel" ref={bottomLoaderRef} className="loading-trigger bottom"></div>)}
 
@@ -330,7 +331,7 @@ const DashboardPage = () => {
             onClick={() => setActiveTab(3)}> em 1 mês </button>
         </div>
         
-        <div className="filters_bar" style={{ padding: '10px 20px', background: '#f8f9fa' }}>
+        <div className="filters_bar">
           <label>Filtrar por Lista: </label>
           <select value={selectedCategory}  onChange={(e) => setSelectedCategory(e.target.value)}
             style={{ padding: '5px', borderRadius: '4px' }}>
@@ -344,7 +345,7 @@ const DashboardPage = () => {
         <div className="task_list">
           
           {sidebarTasks.length > 0 ? sidebarTasks.map(item => {
-            const isDone = item.done;
+            const isDone = item.status;
             
             return (
               <div key={item} className="sidebar_item" >
@@ -352,7 +353,7 @@ const DashboardPage = () => {
                   <i className="bi bi-check-lg"></i>
                 </div>
                 <span style={{opacity: isDone ? 0.6 : 1, 
-                  textDecoration: isDone ? 'line-through' : 'none'}}>{item.title}</span>
+                  textDecoration: isDone ? 'line-through' : 'none'}}>{item.title.length > 15 ? item.title.substring(0, 15) + "..." : item.title}</span>
                 <i className="bi bi-chevron-right" onClick={() => openEditModal(item)}></i>
               </div>
               );}) : (
@@ -360,7 +361,7 @@ const DashboardPage = () => {
               )}
         </div>
 
-        <button onClick={openCreateModal}>Adicionar task</button>
+        <button onClick={openCreateModal}>Adicionar Tarefa</button>
       </aside>
       <TaskDialog isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSave={handleSaveTask}
                   taskToEdit={selectedTask} isViewMode={isViewMode}/>

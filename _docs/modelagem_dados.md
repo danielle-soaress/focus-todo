@@ -56,7 +56,7 @@ O registro das atividades a serem realizadas.
 | Coluna | Tipo (Postgres) | Restrição | Descrição |
 | :--- | :--- | :--- | :--- |
 | **id** | `bigint` | **PK** | Identificador único universal. |
-| `title` | `varchar` | Not Null | Título curto da tarefa com até 200 caracteres. |
+| `title` | `varchar` | Not Null | Título curto da tarefa com até 100 caracteres. |
 | `description` | `text` | - | Detalhamento da tarefa (sem limite curto). |
 | `status` | `boolean` | Default: False | Situação atual da tarefa (feita/não feita). |
 | `due_date` | `timestamp` | - | Data e hora limite para conclusão. |
