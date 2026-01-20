@@ -1,6 +1,11 @@
-# Focus | Sistema de Gestão de Tarefas
+# Focus.
 
 > Uma solução para gerenciamento de produtividade, projetada para oferecer controle sobre fluxos de trabalho pessoais com foco em performance e usabilidade.
+<div align="center">
+    <img width=200px src="./_docs/assets/logo.png"/>
+</div>
+<p align="center">Figura 1: Logo da Aplicação.</p>
+
 
 ## Visão Geral
 
@@ -37,6 +42,23 @@ A concepção da interface priorizou a usabilidade e a clareza visual. O protót
 
 ### Galeria do Projeto
 > Abaixo alguns prints da aplicação.
+<div align="center">
+    <img width=500px src="./_docs/assets/home-screen.png"/>
+</div>
+<p align="center">Figura 2: Página home da aplicação</p>
+<br>
+
+<div align="center">
+    <img width=500px src="./_docs/assets/signin-screen.png"/>
+</div>
+<p align="center">Figura 3: Página de autenticação, onde é possível fazer login e cadastro.</p>
+<br>
+
+<div align="center">
+    <img width=500px src="./_docs/assets/dashboard-screen.png"/>
+</div>
+<p align="center">Figura 4: Página principal, onde é possível acessar o calendário e gerenciar tarefas pessoais.</p>
+<br>
 
 ## Modelagem de Dados
 
