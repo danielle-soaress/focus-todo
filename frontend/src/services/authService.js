@@ -1,4 +1,3 @@
-
 export const signUpApi = async (bodyObject) => {
     /* mock
     bodyObject = {
@@ -68,7 +67,6 @@ export const signInApi = async (bodyObject) => {
 }
 
 export const signOutApi = async (bodyObject) => {
-
     const token = localStorage.getItem('user_token');
 
     const requestOptions = {

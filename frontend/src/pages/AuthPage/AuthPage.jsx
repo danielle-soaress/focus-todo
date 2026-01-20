@@ -25,7 +25,6 @@ function AuthPage() {
         const email = formData.get('email');
         const password = formData.get('password');
 
-        
         const [result, error] = await signInApi({
             user: {
                 email: email,
