@@ -117,7 +117,7 @@ export const updateTask = async (taskId, body) => {
 
 export const getTask = async (taskId) => {
     const token = localStorage.getItem('user_token');
-    const requestOptions = requestJson("", token, "GET");
+    const requestOptions = requestJson(null, token, "GET");
 
     try {
         const response = await fetch(`/tasks/${taskId}`, requestOptions);
@@ -142,7 +142,7 @@ export const getTask = async (taskId) => {
 
 export const getAllTasks = async () => {
     const token = localStorage.getItem('user_token');
-    const requestOptions = requestJson("", token, "GET");
+    const requestOptions = requestJson(null, token, "GET");
 
     try {
         const response = await fetch(`/tasks`, requestOptions);
