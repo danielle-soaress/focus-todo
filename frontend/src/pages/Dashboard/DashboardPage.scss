@@ -157,6 +157,10 @@ body {
     @include center-all;
     justify-content: end;
     gap: 12px;
+
+    label {
+      font-size: 0.8em;
+    }
   }
 
   h2 {

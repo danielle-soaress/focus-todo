@@ -356,10 +356,10 @@ const DashboardPage = () => {
         </div>
         
         <div className="filters_bar">
-          <label>Filtrar por Lista: </label>
+          <label>Filtrar por Categoria: </label>
           <select value={selectedCategory}  onChange={(e) => setSelectedCategory(e.target.value)}
             style={{ padding: '5px', borderRadius: '4px' }}>
-            <option value="all">Todas as Listas</option>
+            <option value="all">Todas as Categorias</option>
             {categories.map(cat => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
