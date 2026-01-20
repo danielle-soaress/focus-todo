@@ -6,17 +6,17 @@ export default defineConfig({
   server: {
     proxy: {
       '/users': {
-        target: 'http://127.0.0.1:3000/api/v1',
+        target: 'http://127.0.0.1:3000',
         changeOrigin: true,
         secure: false,
       },
       '/tasks': {
-        target: 'http://127.0.0.1:3000/api/v1',
+        target: 'http://127.0.0.1:3000',
         changeOrigin: true,
         secure: false,
       },
       '/categories': {
-        target: 'http://127.0.0.1:3000/api/v1',
+        target: 'http://127.0.0.1:3000',
         changeOrigin: true,
         secure: false,
       }

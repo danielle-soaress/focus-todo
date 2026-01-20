@@ -89,7 +89,7 @@ function AuthPage() {
                 msgAmigavel = "Não encontramos uma conta com este email.";
                 break;
             case 422:
-                msgAmigavel = "Dados inválidos. Verifique a formatação do email.";
+                msgAmigavel = "Este email já foi registrado.";
                 break;
             case 500:
                 msgAmigavel = "Erro interno no servidor. Tente novamente mais tarde.";
