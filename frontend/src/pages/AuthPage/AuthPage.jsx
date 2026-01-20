@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import './AuthPage.scss'
 import Navbar from '../../components/Navbar/Navbar'
 import spiralIcon from '../../assets/spiral.svg'
@@ -14,6 +14,12 @@ function AuthPage() {
 
     const [loginAttempts, setLoginAttempts] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
+
+    useEffect(() => {
+        setErrorMessage('');
+        setLoginAttempts(0);
+        window.scrollTo(0, 0); 
+    }, [location.pathname]);
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
@@ -121,7 +127,7 @@ function AuthPage() {
                 </span>
                 {
                     isLoginView ? (
-                        <form onSubmit={handleLoginSubmit}>
+                        <form key="login-form" onSubmit={handleLoginSubmit}>
                             <label>
                                 Email
                                 <input className="textInput" type="email" name="email" placeholder="usuario@exemplo.com" required />
@@ -142,7 +148,7 @@ function AuthPage() {
                             <button type="submit">Faça login</button>
                         </form>
                     ) : (
-                        <form onSubmit={handleSignupSubmit}>
+                        <form key="signup-form" onSubmit={handleSignupSubmit}>
                             <label>
                                 Seu nome
                                 <input className="textInput"  type="text" name="name" placeholder="Ana Silva"  required/>

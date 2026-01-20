@@ -51,13 +51,22 @@ export const signInApi = async (bodyObject) => {
         const authHeader = response.headers.get('Authorization');
         let data = {};
 
-        data = await response.json();
+        const contentType = response.headers.get("content-type");
+
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            data = { error: text }; 
+        }
 
 
         if (response.ok) {
             const token = authHeader ? authHeader.replace('Bearer ', '') : null;
             return [{ token: token, user: data}, null];
         }
+
+        console.log("erro não fatal")
         return [null, { status: response.status,
                         message: response.error || response.errors || 'Erro desconhecido'}];
     } catch (error ) {
