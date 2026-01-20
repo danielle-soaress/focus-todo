@@ -36,7 +36,7 @@ A arquitetura foi desenhada separando as responsabilidades entre cliente e servi
 
 ## UI/UX e Prototipagem
 
-A concepção da interface priorizou a usabilidade e a clareza visual. O protótipo de alta fidelidade foi integralmente desenvolvido no **Figma**, servindo como *blueprint* para o desenvolvimento do Frontend.
+A concepção da interface priorizou a usabilidade e a clareza visual. O protótipo de alta fidelidade foi integralmente desenvolvido no **Figma**, servindo como base para o desenvolvimento do Frontend.
 
 🔗 **[Acesse o Protótipo Interativo no Figma](https://www.figma.com/design/g0aW159G8m8V6K2bQxi6HA/focus.?node-id=18-1242&t=B3HVcu6wfylrwPFB-1)**
 
@@ -79,7 +79,7 @@ Siga as instruções abaixo para configurar o ambiente de desenvolvimento local.
 
 1.  **Clone o repositório**
     ```bash
-    git clone [https://github.com/danielle-soaress/focus-todo.git](https://github.com/danielle-soaress/focus-todo.git)
+    git clone https://github.com/danielle-soaress/focus-todo.git
     ```
 
 2.  **Configuração do Frontend**
