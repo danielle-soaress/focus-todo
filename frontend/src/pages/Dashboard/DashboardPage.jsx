@@ -1,24 +1,53 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import { format, addDays, startOfDay, isAfter, addMonths, isSameMonth, startOfMonth} from 'date-fns';
+import React, { useState, useEffect, useRef} from 'react';
+import {format, addDays, startOfDay, isAfter, addMonths, isSameMonth, startOfMonth} from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import './DashboardPage.scss';
 import Navbar from '../../components/Navbar/Navbar'
+import TaskDialog from '../../components/TaskDialog/TaskDialog';
+import { getAllTasks, createTask, updateTask} from '../../services/taskService';
+import { getAllCategories } from '../../services/categoryService';
 
 const DashboardPage = () => {
+  const [tasks, setTasks] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const loadTasks = async () => {
+    const [data, error] = await getAllTasks();
+    if (data) setTasks(data);
+    if (error != null) error.status == 401 ? handleSignOutSubmit() : null;
+  };
+
+  const loadCategories = async () => {
+    const [data, error] = await getAllCategories();
+    if (data) setCategories(data);
+    if (error != null) error.status == 401 ? handleSignOutSubmit() : null;
+  };
+
+  const handleSignOutSubmit = async () => {
+    await signOutApi();
+    localStorage.removeItem('user_token');
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    loadTasks();
+    loadCategories();
+  }, []);
+
+  /* CALENDAR & SIDEBAR */
+  
   // 0 - hoje, 1 - em 7 dias, 2 - em 1 mês
   const [activeTab, setActiveTab] = useState(1);
-  const [visibleDays, setVisibleDays] = useState([]);
 
-  // título do header do calendário
-  const [currentHeaderTitle, setCurrentHeaderTitle] = useState('');
+  // dias carregados para visualização
+  const [visibleDays, setVisibleDays] = useState([]);
 
   const isLoading = useRef(false); // pra controlar o loading dos dias
   const bottomLoaderRef = useRef(null);
 
   // data limite para carregamento: 12 meses
   const maxDateRef = useRef(addMonths(startOfDay(new Date()), 12)); 
-
-  // refs
+  // referência do calendar grid
   const containerRef = useRef(null);
 
   // inicializa os dias com seus dados relevantes (data completa, numero, etc)
@@ -111,35 +140,6 @@ const DashboardPage = () => {
 
   const todayStr = format(new Date(), 'yyyy-MM-dd');
 
-  // mock de tarefas
-  const [myTasks, setMyTasks] = useState([
-    { id: 1, done: false, title: 'Estudar React', date: '2026-01-19', color: 'purple' },
-    { id: 2, done: true,  title: 'Estudar Ruby on Rails', date: '2026-01-19', color: 'green' },
-    { id: 3, done: false,  title: 'Estudar Calculo II', date: '2026-01-19', color: 'purple' },
-    { id: 4, done: true,  title: 'Cozinhar marmitas', date: '2026-01-19', color: 'green' },
-    { id: 5, done: false,  title: 'Ler 10 páginas', date: '2026-01-19', color: 'purple' },
-    { id: 6, done: false,  title: 'Jogar 2 partidas de Valorant', date: '2026-01-19', color: 'yellow' },
-    { id: 7, done: false,  title: 'Passear com os cachorros', date: '2026-01-19', color: 'yellow' },
-    { id: 8, done: false,  title: 'Organizar os compromissos da semana', date: '2026-01-19', color: 'green' },
-    { id: 9, done: false,  title: 'Academia', date: '2026-01-20', color: 'green' }, 
-    { id: 10, done: false,  title: 'Projeto Focus', date: '2026-01-19', color: 'yellow' },
-  ]);
-
-
-  // função temporária pra ver o efeito de check (modificar depois)
-  const toggleTask = (id) => {
-    setMyTasks(prevTasks => {
-      return prevTasks.map(task => {
-        
-        if (task.id === id) {
-          return { ...task, done: !task.done };
-        }
-        
-        return task;
-      });
-    });
-  };
-
   // pra deixar a primeira letra maiuscula
   const capitalizeFirst = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -156,6 +156,108 @@ const DashboardPage = () => {
     }
   }, [visibleDays]);
 
+  /* TASKS */
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isViewMode, setViewMode] = useState(false);
+
+  const openCreateModal = () => {
+    setSelectedTask(null);
+    setViewMode(false);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (task) => {
+    setSelectedTask(task);
+    setViewMode(false);
+    setModalOpen(true);
+  };
+
+  const openViewModal = (task) => {
+    setSelectedTask(task);
+    setViewMode(true);
+    setModalOpen(true);
+  };
+
+  const handleSaveTask = async (formData) => {
+    const payload = { task: formData };
+
+    if (selectedTask) {
+      const [updated, error] = await updateTask(selectedTask.id, payload);
+      if (updated) {
+        setTasks(tasks.map(t => t.id === updated.id ? updated : t));
+        setModalOpen(false);
+      }
+      loadTasks();
+    } else {
+      const [created, error] = await createTask(payload);
+      if (created) {
+        setTasks([...tasks, created]);
+        setModalOpen(false);
+      }
+    }
+  };
+
+  const toggleTask = async (id) => {
+    const taskToToggle = tasks.find(t => t.id === id);
+    if (!taskToToggle) return;
+
+    const newStatus = !taskToToggle.done;
+
+    setTasks(prevTasks => {
+        return prevTasks.map(task => {
+            if (task.id === id) {
+                return { ...task, done: newStatus };
+            }
+            return task;
+        });
+    });
+
+    const [data, error] = await updateTask(id, {task: { status: newStatus} });
+
+    if (error) {
+        setTasks(prevTasks => prevTasks.map(task => 
+            task.id === id ? { ...task, done: !newStatus } : task
+        ));
+        alert("Não foi possível salvar a alteração.");
+    }
+  };
+
+  /* CATEGORIES */
+
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const filteredGlobalTasks = tasks.filter(task => {
+    if (selectedCategory === 'all') return true;
+
+    return String(task.category_id) === String(selectedCategory);
+  });
+
+  const sidebarTasks = filteredGlobalTasks.filter(task => {
+    if (!task.due_date) return false;
+
+    const taskDateStr = task.due_date.toString().split('T')[0];
+    const today = new Date();
+    const todayStr = format(today, 'yyyy-MM-dd');
+
+    if (activeTab === 1) { // hoje
+      return taskDateStr <= todayStr;
+    }
+    
+    if (activeTab === 2) { // em 1 semana
+      const nextWeekStr = format(addDays(today, 7), 'yyyy-MM-dd');
+      return taskDateStr >= todayStr && taskDateStr <= nextWeekStr;
+    }
+
+    if (activeTab === 3) {// em 1 mês
+      const nextMonthStr = format(addDays(today, 30), 'yyyy-MM-dd');
+      return taskDateStr >= todayStr && taskDateStr <= nextMonthStr;
+    }
+    
+    return true;
+  });
+
   return (
     <>
     <Navbar login={false} signup={false} logged={true}/>
@@ -165,7 +267,12 @@ const DashboardPage = () => {
         
         {visibleDays.map((day, index) => {
           // console.log("Dia gerado:", day.fullDate);
-          const dayTasks = myTasks.filter(task => task.date === day.fullDate);
+          const dayTasks = tasks.filter(task => {
+              if (!task.due_date) return false;
+              const taskDateOnly = task.due_date.toString().split('T')[0];
+              return taskDateOnly === day.fullDate;
+          });
+
           const isToday = day.fullDate === todayStr;
 
           const previousDay = visibleDays[index - 1];
@@ -188,13 +295,18 @@ const DashboardPage = () => {
               </h3>
               
               <div className="day_tasks">
-                {dayTasks.length > 0 ? (dayTasks.map(task => (
-                  <div key={task.id} className={`mini_task ${task.color}`}>
-                    <div className="bar"></div>
+                {dayTasks.length > 0 ? (dayTasks.map(task => {
+                  const category = categories.find(c => c.id === task.category_id);
+                  const categoryColor = category ? "#" + category.color : '#ccc';
+
+                  console.log(categories);
+
+                  return (<div key={task.id} className={`mini_task`}>
+                    <div className="bar" style={{backgroundColor: categoryColor}}></div>
                     <span>{task.title}</span>
-                    <div className="dot"></div>
-                  </div>
-                ))) : (null)}
+                    <div className={`dot ${"priority" + task.priority}`} ></div>
+                  </div>);
+                })) : (null)}
               </div>
             </div>
           );
@@ -213,28 +325,45 @@ const DashboardPage = () => {
           <button className={activeTab === 1 ? 'active' : ''} 
             onClick={() => setActiveTab(1)}> hoje </button>
           <button className={activeTab === 2 ? 'active' : ''} 
-          onClick={() => setActiveTab(2)}> em 7 dias </button>
+            onClick={() => setActiveTab(2)}> em 7 dias </button>
           <button className={activeTab === 3 ? 'active' : ''} 
-          onClick={() => setActiveTab(3)}> em 1 mês </button>
+            onClick={() => setActiveTab(3)}> em 1 mês </button>
+        </div>
+        
+        <div className="filters_bar" style={{ padding: '10px 20px', background: '#f8f9fa' }}>
+          <label>Filtrar por Lista: </label>
+          <select value={selectedCategory}  onChange={(e) => setSelectedCategory(e.target.value)}
+            style={{ padding: '5px', borderRadius: '4px' }}>
+            <option value="all">Todas as Listas</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="task_list">
-          {myTasks.map(item => {
-
+          
+          {sidebarTasks.length > 0 ? sidebarTasks.map(item => {
             const isDone = item.done;
             
             return (
-              <div key={item} className="sidebar_item" onClick={() => toggleTask(item.id)}>
-                <div className={`check_circle ${isDone ? 'checked' : ''}`}>
+              <div key={item} className="sidebar_item" >
+                <div className={`check_circle ${isDone ? 'checked' : ''}`} onClick={() => toggleTask(item.id)}>
                   <i className="bi bi-check-lg"></i>
                 </div>
                 <span style={{opacity: isDone ? 0.6 : 1, 
                   textDecoration: isDone ? 'line-through' : 'none'}}>{item.title}</span>
-                <i className="bi bi-chevron-right"></i>
+                <i className="bi bi-chevron-right" onClick={() => openEditModal(item)}></i>
               </div>
-              )})}
+              );}) : (
+                <p >Nenhuma tarefa para este período.</p>
+              )}
         </div>
+
+        <button onClick={openCreateModal}>Adicionar task</button>
       </aside>
+      <TaskDialog isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSave={handleSaveTask}
+                  taskToEdit={selectedTask} isViewMode={isViewMode}/>
 
     </div>
     </>

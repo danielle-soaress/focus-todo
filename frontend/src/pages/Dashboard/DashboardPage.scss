@@ -254,6 +254,18 @@ body {
   background: transparent;
 }
 
+.priority0 {
+  background-color: #28A745;
+}
+
+.priority1 {
+  background-color: #FFC107;
+}
+
+.priority2 {
+  background-color: #DC3545;
+}
+
 @media (max-width: 1024px) {
   .dashboard_container {
     grid-template-columns: 1fr;

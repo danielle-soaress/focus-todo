@@ -6,12 +6,12 @@ import { signOutApi } from '../../services/authService';
 const Navbar = ({login, signup, logged}) => {
     const navigate = useNavigate();
 
+
     const handleSignOutSubmit = async () => {
         await signOutApi();
         localStorage.removeItem('user_token');
         navigate('/login');
     };
-
 
     return (
         <div className="header_div">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllCategories, createCategory } from '../../services/categoryService';
+import { updateTask } from '../../services/taskService';
 import './TaskDialog.scss'
 
 export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isViewMode }) {
@@ -76,14 +77,13 @@ export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isView
         setErrorMessage('');
         // pra caso o nome esteja vazio
         if (!newCategoryName.trim()) return; 
-        
-        // gera uma cor aleatória, caso o usuário n escolha, pois é um campo required
-        const randomColor = Math.floor(Math.random()*16777215).toString(16);
 
+        const color = newCategoryColor.slice(1);
+        
         const payload = { 
             category: { 
                 name: newCategoryName, 
-                color: randomColor 
+                color: color
             } 
         };
 
