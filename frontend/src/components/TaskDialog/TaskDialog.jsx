@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getAllCategories, createCategory } from '../../services/categoryService';
-import { updateTask } from '../../services/taskService';
+import { updateTask, deleteTask} from '../../services/taskService';
 import './TaskDialog.scss'
 
-export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isViewMode }) {
+export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isViewMode, onDelete, openEditModal}) {
     const PRESET_COLORS = [
         '#6C5CE7',
         '#FF9F1C',
@@ -61,11 +61,25 @@ export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isView
         if (data) setCategories(data);
     };
 
+    const handleDeleteClick = () => {
+       if (taskToEdit && onDelete) {
+           onDelete(taskToEdit.id);
+       }
+    };
+
+    const handleEditClick = () => {
+       if (taskToEdit && onDelete) {
+            onClose();
+            openEditModal(taskToEdit)
+       }
+    };
+
     const handleChange = (e) => {
         setErrorMessage('');
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
 
     const handleSubmit = (e) => {
         setErrorMessage('');
@@ -193,6 +207,12 @@ export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isView
                     {errorMessage && (<div className="error">{errorMessage}</div>)}
 
                     <div className="modal_actions">
+                        {isViewMode && (
+                            <>
+                                <button className="remove_task_button" onClick={handleDeleteClick}>Excluir <i className="bi bi-trash3-fill"></i></button> 
+                                <button className="remove_task_button" onClick={handleEditClick}> Editar <i className="bi bi-pencil-fill"></i></button>
+                            </>
+                            )}
                         {!isViewMode && (
                             <button type="submit">Salvar</button>
                         )}

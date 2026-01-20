@@ -4,31 +4,40 @@ import { ptBR } from 'date-fns/locale';
 import './DashboardPage.scss';
 import Navbar from '../../components/Navbar/Navbar'
 import TaskDialog from '../../components/TaskDialog/TaskDialog';
-import { getAllTasks, createTask, updateTask} from '../../services/taskService';
+import { getAllTasks, createTask, updateTask, deleteTask} from '../../services/taskService';
 import { getAllCategories } from '../../services/categoryService';
+import { signOutApi } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
+
   const [tasks, setTasks] = useState([]);
   const [calendarTasks, setCalendarTasks] = useState([]);
   const [categories, setCategories] = useState([]);
-
-  const loadTasks = async () => {
-    const [data, error] = await getAllTasks();
-    if (data) {setTasks(data); setCalendarTasks(data);}
-    if (error != null) error.status == 401 ? handleSignOutSubmit() : null;
-  };
-
-  const loadCategories = async () => {
-    const [data, error] = await getAllCategories();
-    if (data) setCategories(data);
-    if (error != null) error.status == 401 ? handleSignOutSubmit() : null;
-  };
 
   const handleSignOutSubmit = async () => {
     await signOutApi();
     localStorage.removeItem('user_token');
     navigate('/login');
   };
+
+  const loadTasks = async () => {
+    const [data, error] = await getAllTasks();
+    if (data) {setTasks(data); setCalendarTasks(data);}
+    if (error?.status === 401) {
+        handleSignOutSubmit();
+    }
+  };
+
+  const loadCategories = async () => {
+    const [data, error] = await getAllCategories();
+    if (data) setCategories(data);
+    if (error?.status === 401) {
+        handleSignOutSubmit();
+    }
+  };
+
 
   useEffect(() => {
     loadTasks();
@@ -181,6 +190,21 @@ const DashboardPage = () => {
     setModalOpen(true);
   };
 
+  const handleDeleteTask = async (id) => {
+    const [success, error] = await deleteTask(id);
+
+    if (success) {
+        setTasks(prev => prev.filter(t => t.id !== id));
+        setCalendarTasks(prev => prev.filter(t => t.id !== id));
+        setModalOpen(false);
+        setSelectedTask(null);
+    } else {
+        alert("Erro ao excluir tarefa. Tente novamente.");
+        console.error(error);
+    }
+};
+
+
   const handleSaveTask = async (formData) => {
     const payload = { task: formData };
 
@@ -292,7 +316,7 @@ const DashboardPage = () => {
               const categoryColor = category ? "#" + category.color : '#ccc';
 
               return (
-                <div key={task.id} className={`mini_task`}>
+                <div key={task.id} className={`mini_task`} onClick={() => openViewModal(task)}>
                   <div className="bar" style={{backgroundColor: categoryColor}}></div>
                   <span>{task.title.length > 15 ? task.title.substring(0, 15) + "..." : task.title}</span>
                   <div className={`dot ${"priority" + task.priority}`} ></div>
@@ -352,9 +376,10 @@ const DashboardPage = () => {
                 <div className={`check_circle ${isDone ? 'checked' : ''}`} onClick={() => toggleTask(item.id)}>
                   <i className="bi bi-check-lg"></i>
                 </div>
-                <span style={{opacity: isDone ? 0.6 : 1, 
+                <span onClick={() => openViewModal(item)} style={{opacity: isDone ? 0.6 : 1, 
                   textDecoration: isDone ? 'line-through' : 'none'}}>{item.title.length > 15 ? item.title.substring(0, 15) + "..." : item.title}</span>
-                <i className="bi bi-chevron-right" onClick={() => openEditModal(item)}></i>
+                <i className="bi bi-pencil-fill" onClick={() => openEditModal(item)}></i>
+                <i className="bi bi-trash3-fill" onClick={() => handleDeleteTask(item.id)}></i>
               </div>
               );}) : (
                 <p >Nenhuma tarefa para este período.</p>
@@ -364,7 +389,7 @@ const DashboardPage = () => {
         <button onClick={openCreateModal}>Adicionar Tarefa</button>
       </aside>
       <TaskDialog isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSave={handleSaveTask}
-                  taskToEdit={selectedTask} isViewMode={isViewMode}/>
+                  taskToEdit={selectedTask} isViewMode={isViewMode} onDelete={handleDeleteTask} openEditModal={openEditModal}/>
 
     </div>
     </>
