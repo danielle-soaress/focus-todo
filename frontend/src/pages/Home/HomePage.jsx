@@ -22,7 +22,7 @@ function HomePage() {
           </div>
           <p>Seu gerenciador de tarefas digital. <br/>Experimente agora.</p>
         </div>
-        <img src={homeImg}></img>
+        <img className="home_img" src={homeImg}></img>
       </div>
     </div>
     </>

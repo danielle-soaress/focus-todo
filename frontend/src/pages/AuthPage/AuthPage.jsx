@@ -110,7 +110,9 @@ function AuthPage() {
 
         <div className="login_content">
             <div className="left_content">
-                <p>Transforme sua lista de tarefas,<br/>Realize pequenas vitórias diárias.</p>
+
+                {!isLoginView ? (<p>Transforme sua lista de tarefas,<br/>Realize pequenas vitórias diárias.</p>) : (<p>Dê vida aos seus projetos, <br/>Acompanhe seu progresso com clareza.</p>)}
+        
             </div>
             <div className="right_content">
                 <span className="introduction_text_span">
@@ -133,9 +135,9 @@ function AuthPage() {
                                 <a href="#" className="link_forgot">Esqueci a senha</a>
                             )}
 
-                            <label className="remember-me">
+                            {/* <label className="remember-me">
                                 <input type="checkbox" name="remember_me"/> Lembre-se de mim
-                            </label>
+                            </label> */}
 
                             <button type="submit">Faça login</button>
                         </form>
