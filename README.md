@@ -1,1 +1,82 @@
-# focus-todo
+# Focus | Sistema de Gestão de Tarefas
+
+> Uma solução para gerenciamento de produtividade, projetada para oferecer controle sobre fluxos de trabalho pessoais com foco em performance e usabilidade.
+
+## Visão Geral
+
+O **Focus** é uma aplicação web Fullstack desenvolvida para otimizar a organização de atividades diárias. O objetivo é permitir aos usuários planejar suas semanas e meses com eficiência.
+
+## Funcionalidades
+
+* **Dashboard Interativo:** Visualização macro de tarefas através de um calendário mensal dinâmico.
+* **Filtragem Avançada:**
+    * Categorização semântica (Trabalho, Pessoal, Estudos, etc.).
+    * Segmentação temporal (Visão de Hoje, Próximos 7 dias, Próximo Mês).
+* **Gestão de Ciclo de Vida (CRUD):** Criação, leitura, atualização e exclusão de tarefas.
+* **Identidade Visual Dinâmica:** Sistema de cores baseado na categoria da tarefa para rápida identificação visual.
+* **Autenticação e Segurança:** Controle de acesso via autenticação de usuário.
+
+## Stack Tecnológico
+
+A arquitetura foi desenhada separando as responsabilidades entre cliente e servidor:
+
+**Frontend (Client-side):**
+* **React.js:** Biblioteca principal para construção da interface reativa.
+* **Sass:** Pré-processador CSS para estilização modular e escalável.
+* **Bootstrap:** Framework para responsividade e componentes base.
+
+**Backend (Server-side):**
+* **Ruby on Rails:** Framework para construção da API RESTful.
+* **PostgreSQL:** Sistema gerenciador de banco de dados relacional (SGBD) para persistência segura dos dados.
+
+## UI/UX e Prototipagem
+
+A concepção da interface priorizou a usabilidade e a clareza visual. O protótipo de alta fidelidade foi integralmente desenvolvido no **Figma**, servindo como *blueprint* para o desenvolvimento do Frontend.
+
+🔗 **[Acesse o Protótipo Interativo no Figma](https://www.figma.com/design/g0aW159G8m8V6K2bQxi6HA/focus.?node-id=18-1242&t=B3HVcu6wfylrwPFB-1)**
+
+### Galeria do Projeto
+> Abaixo alguns prints da aplicação.
+
+## Modelagem de Dados
+
+A modelagem de dados foi estruturada para garantir a integridade referencial e a escalabilidade do sistema. O esquema relacional suporta associações entre usuários, tarefas e categorias.
+
+🔗 **[Ver Documentação Técnica da Modelagem](https://github.com/danielle-soaress/focus-todo/blob/main/_docs/modelagem_dados.md)**
+
+## Como Executar o Projeto
+
+Siga as instruções abaixo para configurar o ambiente de desenvolvimento local.
+
+### Pré-requisitos
+* Node.js e gerenciador de pacotes (NPM ou Yarn)
+* Ruby e Ruby on Rails
+* PostgreSQL instalado e rodando
+
+### Passo a Passo
+
+1.  **Clone o repositório**
+    ```bash
+    git clone [https://github.com/danielle-soaress/focus-todo.git](https://github.com/danielle-soaress/focus-todo.git)
+    ```
+
+2.  **Configuração do Frontend**
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
+
+3.  **Configuração do Backend** (Em um novo terminal)
+    ```bash
+    cd backend
+    bundle install
+    rails db:create db:migrate
+    rails s
+    ```
+    *A API estará disponível em `http://localhost:3000` (padrão Rails).*
+
+## Autora
+
+Desenvolvido por **Danielle Soares**
+*Graduanda em Engenharia de Software na Universidade de Brasília (UnB).*
