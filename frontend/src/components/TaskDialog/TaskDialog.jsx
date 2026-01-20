@@ -3,7 +3,7 @@ import { getAllCategories, createCategory } from '../../services/categoryService
 import { updateTask, deleteTask} from '../../services/taskService';
 import './TaskDialog.scss'
 
-export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isViewMode, onDelete, openEditModal}) {
+export default function TaskDialog({ onCategoryCreate, isOpen, onClose, onSave, taskToEdit, isViewMode, onDelete, openEditModal}) {
     const PRESET_COLORS = [
         '#6C5CE7',
         '#FF9F1C',
@@ -109,6 +109,11 @@ export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isView
 
             // já seleciona ela no form atual
             setFormData(prev => ({ ...prev, category_id: newCat.id }));
+            
+            // atualiza no página que chama a dialog
+            if (onCategoryCreate) {
+                onCategoryCreate(newCat);
+            }
 
             // limpa e fecha
             setNewCategoryName('');
@@ -128,7 +133,7 @@ export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isView
                         {isViewMode ? 'Visualizar Tarefa' : (taskToEdit ? 'Editar Tarefa' : 'Nova Tarefa')}
                     </h2>
                     <button className="close" onClick={onClose} >
-                        <i class="bi bi-x"></i>
+                        <i className="bi bi-x"></i>
                     </button>
                 </div>
 
@@ -141,7 +146,7 @@ export default function TaskDialog({ isOpen, onClose, onSave, taskToEdit, isView
                     <div className="form_group">
                         <label>Descrição</label>
                         <textarea name="description" value={formData.description} onChange={handleChange} 
-                            disabled={isViewMode}rows="3"/>
+                            disabled={isViewMode}rows="3"required/>
                     </div>
                     <div className="form_group">
                         <label>Prazo</label>

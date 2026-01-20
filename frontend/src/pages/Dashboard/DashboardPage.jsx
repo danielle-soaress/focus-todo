@@ -251,6 +251,10 @@ const DashboardPage = () => {
 
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  const handleCategoryAdded = (newCategory) => {
+    setCategories(prev => [...prev, newCategory]);
+  };
+
   const filteredGlobalTasks = tasks.filter(task => {
     if (selectedCategory === 'all') return true;
 
@@ -314,6 +318,8 @@ const DashboardPage = () => {
             {dayTasks.length > 0 ? (dayTasks.map(task => {
               const category = categories.find(c => c.id === task.category_id);
               const categoryColor = category ? "#" + category.color : '#ccc';
+
+              console.log(task.title + " " + categoryColor);
 
               return (
                 <div key={task.id} className={`mini_task`} onClick={() => openViewModal(task)}>
@@ -388,7 +394,7 @@ const DashboardPage = () => {
 
         <button onClick={openCreateModal}>Adicionar Tarefa</button>
       </aside>
-      <TaskDialog isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSave={handleSaveTask}
+      <TaskDialog onCategoryCreate={handleCategoryAdded} isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSave={handleSaveTask}
                   taskToEdit={selectedTask} isViewMode={isViewMode} onDelete={handleDeleteTask} openEditModal={openEditModal}/>
 
     </div>
