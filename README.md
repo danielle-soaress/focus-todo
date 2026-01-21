@@ -89,14 +89,35 @@ Siga as instruções abaixo para configurar o ambiente de desenvolvimento local.
     npm run dev
     ```
 
-3.  **Configuração do Backend** (Em um novo terminal)
+3. **Configuração do Backend** (API)
+   
+    Entre na pasta do backend e instale as dependências:
     ```bash
     cd backend
     bundle install
+    
+    ```
+    
+    
+    **Importante:** Antes de rodar o banco, crie um arquivo chamado `.env` na raiz da pasta `backend` com as seguintes configurações (você pode ajustar usuário/senha conforme seu banco local). Utilize o `.env.example` como base:
+    ```env
+    DB_USERNAME=postgres
+    DB_PASSWORD=postgres
+    DB_HOST=127.0.0.1
+    DEVISE_JWT_SECRET_KEY=chave_secreta_para_desenvolvimento_123
+    
+    ```
+    
+    
+    Crie o banco de dados, rode as migrações e inicie o servidor:
+    ```bash
     rails db:create db:migrate
     rails s
+    
     ```
-    *A API estará disponível em `http://localhost:3000` (padrão Rails).*
+    
+    
+    *A API estará disponível em `http://localhost:3000`.*
 
 ## Autora
 
